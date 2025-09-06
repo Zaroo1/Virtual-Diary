@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmD Diary</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url('drug.jpg') no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 32, 96, 0.8); /* Deep blue overlay */
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      background: white;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      width: 90%;
+      max-width: 550px;
+      text-align: center;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      color: #002060; /* Deep blue */
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 5px;
+      font-weight: bold;
+      color: #002060;
+      text-align: left;
+    }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      background: #002060;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      border: none;
+    }
+
+    button:hover {
+      background: #001440;
+    }
+
+    .msg {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      color: #444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container">
+    <h2>📖 Zaroo's Diary</h2>
+    <form id="diaryForm">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="E.g. First Day at Campus" required>
+
+      <label for="entry">Diary Entry</label>
+      <textarea id="entry" placeholder="Write what happened today..." required></textarea>
+
+      <button type="submit">Save Entry</button>
+      <p class="msg" id="msg"></p>
+    </form>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxAJWRNPSad4X73mioAZ7ZF9_WKMyqL2ie-2cuByoormYnG3fhM1C6xkIlO8EFwtvbC/exec";
+
+    document.getElementById("diaryForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value;
+      const entry = document.getElementById("entry").value;
+      const msg = document.getElementById("msg");
+      msg.textContent = "Saving...";
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify({ title, entry })
+        });
+
+        const result = await response.json();
+        if (result.result === "success") {
+          msg.textContent = "✅ Entry saved successfully!";
+          document.getElementById("diaryForm").reset();
+        } else {
+          msg.textContent = "❌ Something went wrong.";
+        }
+      } catch (error) {
+        msg.textContent = "⚠️ Error saving entry. Try again.";
+      }
+    });
+  </script>
+</body>
+</html>
